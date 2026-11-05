@@ -1,0 +1,44 @@
+# Save this as ".gitignore" (with the leading dot) in the repo root.
+
+# secrets and env files (only *.example files are committed)
+.env
+.env.*
+*.env
+!*.env.example
+secrets/*
+!secrets/*.example
+
+# keys and certificates
+*.pem
+*.key
+*.crt
+*.cer
+*.pfx
+*.p12
+
+# cloud and cluster credentials
+.aws/
+.kube/
+kubeconfig*
+*.kubeconfig
+
+# real Helm values (the template with placeholders IS committed)
+helm/my-values.yaml
+helm/my-values.new.yaml
+helm/*.real.yaml
+
+# infrastructure state
+*.tfstate*
+.terraform/
+
+# raw material that must stay outside the repo anyway; ignored as a second line of defence
+raw/
+raw-*/
+lab-raw/
+*.log
+*.har
+
+# OS and editor
+.DS_Store
+.vscode/
+.idea/
