@@ -9,7 +9,7 @@ Always check the official docs for up-to-date instructions on deploying.
 **Status:** Work in progress. I ran this deployment once, in November 2026, and I'm writing it up chapter by chapter.
 
 ## Why this exists
-Some Bitwarden customers deploy their self-hosted instance on OpenShift (or use the Helm deployment more generally), and at times I need a cluster to test whether I can reproduce what they report. A cluster that runs around the clock isn't practical for that, so I wanted to put in the upfront time to document repeatable steps: spin up an OpenShift cluster, deploy Bitwarden with its Helm chart, test what I need, and tear it all down again (which matters, to avoid unnecessary charges).
+Some people deploy their Bitwarden self-hosted instance on OpenShift (or use the Helm deployment more generally), and at times, I need a cluster to test whether I can reproduce reported issues. A cluster that runs around the clock isn't practical for that, so I wanted to put in the upfront time to document repeatable steps: spin up an OpenShift cluster, deploy Bitwarden with its Helm chart, test what I need, and tear it all down again (which matters, to avoid unnecessary charges).
 
 ## Goals
 + Get a working self-hosted Bitwarden instance, deployed with its Helm chart, running on ROSA
@@ -49,7 +49,7 @@ Chapters get a link when they're written. Until then they're planned.
 
 | # | Chapter | What it covers | Status |
 |---|---|---|---|
-| 00 | Why OpenShift, and why ROSA | What OpenShift is, options available, Bitwarden on Kubernetes, how Helm fits in | planned |
+| 00 | [Why OpenShift, and why ROSA](docs/00-why-rosa.md) | What OpenShift is, options available, Bitwarden on Kubernetes, how Helm fits in | in progress |
 | 01 | Prerequisites | Accounts, CLIs, logins, enabling and linking ROSA, a naming/tagging convention | planned |
 | 02 | Identity | Account roles, the OIDC provider, operator roles and the OCM role, and why there are so many | planned |
 | 03 | Network | The VPC, public and private subnets, NAT, endpoints, and CloudFormation | planned |
@@ -79,7 +79,7 @@ bitwarden-on-rosa/
 + Commands were run on macOS with zsh. Most work on Linux, but check `sed -i` and package-manager steps.
 
 ## Privacy
-There are none of my own account IDs, emails, domains or keys in this repository. Screenshots are redacted with solid boxes, and the real secrets live outside the repo. If you notice something that looks like a leak, please open an issue.
+None of my own account IDs, emails, domains or keys are in this repository. Screenshots are redacted with solid boxes, and the real secrets live outside the repo. If you notice something that looks like a leak, please open an issue.
 
 ## Licence
 MIT. See [LICENSE](LICENSE).
