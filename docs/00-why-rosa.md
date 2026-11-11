@@ -68,10 +68,10 @@ I didn't do an exhaustive comparison, but this is the list I ended up with to ev
 | ROSA, classic | Managed OpenShift on AWS | Red Hat (the control plane runs in my account) | Works, but more machines to run and pay for |
 | ROSA with hosted control planes | Managed OpenShift on AWS | Red Hat (the control plane runs in Red Hat's account) | What I chose |
 
-Reference - OpenShift Dedicated vs ROSA: both are fully managed OpenShift, operated by Red Hat's site reliability engineers. OpenShift Dedicated is Red Hat's own service, available on AWS and Google Cloud, with support through Red Hat. ROSA is a joint service with AWS: support from either, one AWS bill, and closer integration with AWS (the IAM roles in chapter 02).
+Reference - OpenShift Dedicated vs ROSA: both are fully managed OpenShift, operated by Red Hat's site reliability engineers (with AWS, in ROSA's case). OpenShift Dedicated is Red Hat's own service, available on AWS and Google Cloud, with support through Red Hat. ROSA is a joint service with AWS: support from either, one AWS bill, and closer integration with AWS (the IAM roles in chapter 02).
 
 ## Why ROSA with hosted control planes
-Being completely honest, I wasn't deeply invested in choosing ROSA. Someone mentioned ROSA and ARO, and between the two I'd rather spend time on AWS. I'd already started researching ROSA when I heard that you can also run OKD on a single large VM on GCP (which is where I usually spin up my Docker Compose deployments), mainly to keep costs down. OOKD is the community upstream, and the setup I heard about was a single node on one VM, which made ROSA feel like the closer match, as long as I could keep tight control of what was running to manage cost. Both are reasonable, and ROSA turned out to fit what I needed:
+Being completely honest, I wasn't deeply invested in choosing ROSA. Someone mentioned ROSA and ARO, and between the two I'd rather spend time on AWS. I'd already started researching ROSA when I heard that you can also run OKD on a single large VM on GCP (which is where I usually spin up my Docker Compose deployments), mainly to keep costs down. OKD is the community upstream, and the setup I heard about was a single node on one VM, which made ROSA feel like the closer match, as long as I could keep tight control of what was running to manage cost. Both are reasonable, and ROSA turned out to fit what I needed:
 + **It's a multi-node cluster of the supported product**, so it behaves much more like a customer's environment.
 + **Billing is by the hour, through AWS.** I pay for the cluster only while it exists, which suits the create, test, delete I was going for. I'm very cloud-cost-conscious (I'm the one who reminds people to switch off idle VMs), so there are cost checks throughout to show rough estimates of costs.
 + **With hosted control planes, Red Hat runs the control plane in its own account.** I only run the worker nodes (two is the minimum here), I pay a per-cluster fee instead of running control plane machines, and the cluster was ready in about 10 to 15 minutes.
@@ -80,6 +80,30 @@ Reference - classic vs hosted control planes: in classic ROSA, the control plane
 
 Random note: the `--mode auto` and `--mode manual` options on the `rosa` commands are a different thing. They decide whether the CLI creates the AWS resources for you or prints the commands for you to run.
 
+## What Bitwarden looks like on Kubernetes
+On Docker Compose, Bitwarden is a handful of containers on one machine, with an nginx container routing requests to the others. The Helm chart runs the same pieces on Kubernetes, but each one becomes its own pod, behind its own service, so Kubernetes can place and restart them independently. The routing job moves to the cluster (a Route on OpenShift).
+
+![Bitwarden on OpenShift at a glance: browsers reach the OpenShift router, Routes send paths to the Bitwarden services, which use a SQL Server pod and shared volumes on EFS](../assets/00-why/02-bitwarden-on-kubernetes.svg)
+
++ **web** is the web vault.
++ **api** is the core API, and **identity** handles sign-in.
++ **admin** is the system administrator portal.
++ **icons**, **notifications** and **events** fetch website icons, push real-time sync and record organisation event logs.
++ **attachments** serves file attachments.
++ **sso** handles single sign-on, and **scim** handles user provisioning (scim is off by default).
++ **mssql** is a SQL Server pod (or you can point the chart at an external SQL Server instead).
+
+The chart creates one replica of each by default, which is what this lab runs. Most of the pods are stateless, but they share some storage, and the database has its own:
++ **Shared volumes** need `ReadWriteMany` access, so several pods can use them at once: attachments, data-protection keys and licences, plus a fourth for logs if you enable it (this lab does). That's why the lab builds an EFS file system in chapter 05.
++ **The database** has three volumes of its own (data, log and backups). The chart's default puts them on the same shared storage class, but SQL Server doesn't need `ReadWriteMany`, so this lab overrides that and uses block storage (EBS) instead (chapter 06).
+
+One replica of everything is enough for this lab. I haven't tried running more than one replica of any service. As far as I know, that isn't something the Helm deployment is typically supported for, so check Bitwarden's current guidance before trying it.
+
+## Helm in a paragraph
+Helm is a command line tool that runs on my laptop. A chart is a bundle of templates plus default values, and my own values file overrides those defaults. Helm fills in the templates and sends the result to the cluster's API server. The list of chart repositories lives on my laptop, not in the cluster, but the cluster does store a record of each installed "release", which is how `helm upgrade` and `helm uninstall` know what to change. Coming from Bitwarden's Docker install script, `helm upgrade --install` plays the part of `./bitwarden.sh install` followed by `start`, and `helm template` is a safe way to see what would be created without creating it. (Bitwarden's docs say Helm 3. I used Helm 4.3.1 and it worked.)
+
+## What's next
+Chapter 01 gets the accounts, command line tools and logins in place, and enables ROSA in AWS. Nothing billable yet: the first things that cost money come in chapter 03, with the network.
 
 ## Sources for this chapter
 + [ROSA pricing page](https://aws.amazon.com/rosa/pricing/)
@@ -90,3 +114,8 @@ Random note: the `--mode auto` and `--mode manual` options on the `rosa` command
 + [ROSA with hosted control planes now available (Red Hat blog)](https://redhat.com/en/blog/red-hat-openshift-service-aws-hosted-control-planes-now-available)
 + [ROSA FAQs](https://www.redhat.com/en/technologies/cloud-computing/openshift/aws/faq)
 + [OpenShift Ingress Operator (GitHub)](https://github.com/openshift/cluster-ingress-operator)
++ [Bitwarden: Self-host with Helm](https://bitwarden.com/help/self-host-with-helm/), [AWS EKS deployment](https://bitwarden.com/help/aws-eks-deployment/) and [OpenShift deployment](https://bitwarden.com/help/openshift-deployment/)
++ [helm-charts repo](https://github.com/bitwarden/helm-charts)
++ [Bitwarden: External MSSQL database](https://bitwarden.com/help/external-db/)
++ [Bitwarden helm-charts: values.yaml](https://github.com/bitwarden/helm-charts/blob/main/charts/self-host/values.yaml)
++ [Helm: Advanced techniques, storage backends](https://helm.sh/docs/topics/advanced) (the page says it hasn't been updated for Helm 4 yet, but the default it describes is the same)

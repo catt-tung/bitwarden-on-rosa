@@ -49,7 +49,7 @@ Chapters get a link when they're written. Until then they're planned.
 
 | # | Chapter | What it covers | Status |
 |---|---|---|---|
-| 00 | [Why OpenShift, and why ROSA](docs/00-why-rosa.md) | What OpenShift is, options available, Bitwarden on Kubernetes, how Helm fits in | in progress |
+| 00 | [Why OpenShift, and why ROSA](docs/00-why-rosa.md) | What OpenShift is, options available, Bitwarden on Kubernetes, how Helm fits in | done |
 | 01 | Prerequisites | Accounts, CLIs, logins, enabling and linking ROSA, a naming/tagging convention | planned |
 | 02 | Identity | Account roles, the OIDC provider, operator roles and the OCM role, and why there are so many | planned |
 | 03 | Network | The VPC, public and private subnets, NAT, endpoints, and CloudFormation | planned |
@@ -88,4 +88,5 @@ MIT. See [LICENSE](LICENSE).
 + Red Hat: [ROSA Quickstart](https://cloud.redhat.com/experts/rosa/quickstart/), [Required IAM roles and resources](https://docs.redhat.com/en/documentation/red_hat_openshift_service_on_aws/4/html/prepare_your_environment/rosa-hcp-prepare-iam-roles-resources), [OCM role becoming mandatory](https://access.redhat.com/articles/7137057), [Using Container Storage Interface (CSI), including the AWS EFS section](https://docs.redhat.com/en/documentation/red_hat_openshift_service_on_aws_classic_architecture/4/html/storage/using-container-storage-interface-csi) (classic architecture edition; the steps worked on HCP)
 + AWS: [Set up to use ROSA](https://docs.aws.amazon.com/rosa/latest/userguide/set-up.html), [ROSA pricing](https://aws.amazon.com/rosa/pricing/), [aws login announcement](https://aws.amazon.com/about-aws/whats-new/2025/11/console-credentials-aws-cli-sdk-authentication/)
 + Bitwarden: [Kubernetes service accounts](https://bitwarden.com/help/kubernetes-service-accounts/), [Add rawManifest files](https://bitwarden.com/help/add-rawmanifest-files/), [External MSSQL database](https://bitwarden.com/help/external-db/), [helm-charts repo](https://github.com/bitwarden/helm-charts)
++ [Bitwarden: Self-host with Helm](https://bitwarden.com/help/self-host-with-helm/), [AWS EKS deployment](https://bitwarden.com/help/aws-eks-deployment/) and [OpenShift deployment](https://bitwarden.com/help/openshift-deployment/)
 + Kubernetes: [Ingress NGINX retirement statement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)
