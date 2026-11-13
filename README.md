@@ -50,7 +50,7 @@ Chapters get a link when they're written. Until then they're planned.
 | # | Chapter | What it covers | Status |
 |---|---|---|---|
 | 00 | [Why OpenShift, and why ROSA](docs/00-why-rosa.md) | What OpenShift is, options available, Bitwarden on Kubernetes, how Helm fits in | done |
-| 01 | Prerequisites | Accounts, CLIs, logins, enabling and linking ROSA, a naming/tagging convention | in progress |
+| 01 | Prerequisites | Accounts, CLIs, logins, enabling and linking ROSA, a naming/tagging convention | done |
 | 02 | Identity | Account roles, the OIDC provider, operator roles and the OCM role, and why there are so many | planned |
 | 03 | Network | The VPC, public and private subnets, NAT, endpoints, and CloudFormation | planned |
 | 04 | Cluster | Creating the cluster, reading the logs, logging in | planned |
